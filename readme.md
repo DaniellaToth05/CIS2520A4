@@ -22,5 +22,8 @@ Did you use any resources (for example book, notes etc) in this assignment?
     Slide 23 of GraphPath lecture slides for pseudocode on Dijkstra's algorithm
     - https://courselink.uoguelph.ca/d2l/le/content/911255/viewContent/3985634/View 
 
+    adjacency list:
+    - https://www.geeksforgeeks.org/c-program-to-implement-adjacency-list/
+
 ## Implementation
 Is the assignment complete? If not, mention what part of the assignment is missing or incomplete.

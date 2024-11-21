@@ -21,7 +21,42 @@ void prompt(void)
 Graph *readGraph(const char *filename)
 {
     // Implement the function logic here
-    return NULL;
+    FILE *file = fopen(filename, "r"); // open the file for reading
+    
+    // check if the file was opened successfully
+    if(file != NULL){
+        
+        Graph *graph = (Graph *)malloc(sizeof(Graph)); // allocate memory for the graph
+        
+        // check if memory was allocated successfully
+        if(graph != NULL){
+            fscanf(file, "%d", &graph->numVertices); // read the number of vertices from the file
+
+            // loop through the adjacency matrix and read the values from the file
+            for(int i = 0; i < graph->numVertices; i++){
+                for(int j = 0; j < graph->numVertices; j++){
+                    fscanf(file, "%d", &graph->adjMatrix[i][j]); // read the value from the file and store it in the adjacency matrix
+                }
+                graph->adjList[i] = NULL; // initialize the adjacency list to NULL
+            }
+
+            fclose(file); // close the file
+            return graph; // return the graph
+        }
+        // memory for graph was not allocated successfully
+        else {
+            printf("Error allocating memory for graph\n");
+            fclose(file); // close the file
+            return NULL;
+        }
+        
+    }
+    // file was not opened successfully
+    else {
+        printf("Error opening file\n");
+        return NULL;
+    }
+    return NULL; // return NULL if an error occurs
 }
 
 /**
@@ -32,7 +67,16 @@ Graph *readGraph(const char *filename)
 Node *createNode(int vertex)
 {
     // Implement the function logic here
-    return NULL;
+    Node *newNode = (Node *)malloc(sizeof(Node)); // allocate memory for the new node
+    if(newNode != NULL){
+        newNode->vertex = vertex; // set the vertex number
+        newNode->next = NULL; // set the next pointer to NULL
+        return newNode; // return the new node
+    }
+    else {
+        printf("Error allocating memory for node\n");
+        return NULL; // return NULL if an error occurs
+    }
 }
 
 /**
