@@ -212,4 +212,20 @@ void dijkstra(Graph *graph, int startVertex)
 void freeGraph(Graph *graph)
 {
     // Implement the function logic here
+    if (graph != NULL){
+        for(int i = 0; i < graph->numVertices; i++){
+            Node *current = graph->adjList[i]; // get the current node
+            Node *next = NULL; // get the next node
+            while(current != NULL){
+                next = current->next; // get the next node
+                free(current); // free the current node
+                current = next; // move to the next node
+            }
+        }
+        free(graph); // free the graph
+    }
+    else {
+        printf("Graph is NULL\n");
+        return;
+    }
 }
