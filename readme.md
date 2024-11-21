@@ -14,5 +14,13 @@ This assignment is to write a C program that works with a graph stored as an adj
 ## Resources 
 Did you use any resources (for example book, notes etc) in this assignment?
 
+    Resources I used for this assignment:
+
+    Slides 28 and 36 of GraphIntro lecure slides for pseudocode on dfs and bfs algorithms
+    - https://courselink.uoguelph.ca/d2l/le/content/911255/viewContent/3980006/View
+
+    Slide 23 of GraphPath lecture slides for pseudocode on Dijkstra's algorithm
+    - https://courselink.uoguelph.ca/d2l/le/content/911255/viewContent/3985634/View 
+
 ## Implementation
 Is the assignment complete? If not, mention what part of the assignment is missing or incomplete.
