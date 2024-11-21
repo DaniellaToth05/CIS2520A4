@@ -86,6 +86,16 @@ Node *createNode(int vertex)
 void displayAdjacencyList(Graph *graph)
 {
     // Implement the function logic here
+    for(int i = 0; i < graph->numVertices; i++){
+        Node *current = graph->adjList[i]; // get the current node
+        printf("Vertex %d: ", i + 1); // print the vertex number
+        // loop through the adjacency list and print the neighbors
+        while(current != NULL){
+            printf("%d ", current->vertex + 1); // print the neighbor vertex number
+            current = current->next; // move to the next neighbor
+        }
+        printf("\n");
+    }
 }
 
 /**
