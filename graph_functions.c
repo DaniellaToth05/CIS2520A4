@@ -105,6 +105,16 @@ void displayAdjacencyList(Graph *graph)
 void createAdjacencyList(Graph *graph)
 {
     // Implement the function logic here
+    for(int i = 0; i < graph->numVertices; i++){
+        for(int j = 0; j < graph->numVertices; j++){
+            // if the edge exists, add the neighbor to the adjacency list
+            if(graph->adjMatrix[i][j] != 0){
+                Node *newNode = createNode(j); // create a new node
+                newNode->next = graph->adjList[i]; // add the new node to the adjacency list
+                graph->adjList[i] = newNode; // update the adjacency list
+            }
+        }
+    }
 }
 
 /**
