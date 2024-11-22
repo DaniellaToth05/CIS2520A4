@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         prompt();
 
         // Get user input
-        printf("Enter a Choice: ");
+        printf("\nEnter a Choice: ");
         scanf("%d", &choice);
 
         /*
@@ -44,20 +44,32 @@ int main(int argc, char *argv[])
         switch (choice) {
             case 1:
                 // Code for case 1
-                printf("Adjacency List:\n");
+                printf("\n-----------------------");
+                printf("\n*   Adjacency List:   *");
+                printf("\n-----------------------\n\n");
                 displayAdjacencyList(graph);
+                printf("-----------------------\n");
                 break;
             case 2:
-                printf("BFS (Breadth-First Search) starting from vertex %d:\n", startVertex + 1);
+                printf("\n----------------------------------");
+                printf("\n*   BFS (Breadth-First Search)   *\n*   starting from vertex %d:      *", startVertex + 1);
+                printf("\n----------------------------------\n\n");
                 bfs(graph, startVertex);
+                printf("\n----------------------------------\n");
                 break;
             case 3:
-                printf("DFS (Depth-First Search) starting from vertex %d:\n", startVertex + 1);
+                printf("\n----------------------------------");
+                printf("\n*    DFS (Depth-First Search)    *\n*    starting from vertex %d:     *\n", startVertex + 1);
+                printf("----------------------------------\n\n");
                 dfs(graph, startVertex);
+                printf("\n\n----------------------------------\n");
                 break;
             case 4:
-                printf("Dijkstra's Algorithm to find shortest path, starting from vertex %d:\n", startVertex + 1);
+                printf("\n------------------------------------------------\n");
+                printf("*  Dijkstra's Algorithm to find shortest path  *\n*           starting from vertex %d:            *\n", startVertex + 1);
+                printf("------------------------------------------------\n");
                 dijkstra(graph, startVertex);
+                printf("\n------------------------------------------------\n");
                 break;
             case 5:
                 printf("Exiting the program. Bye!\n");

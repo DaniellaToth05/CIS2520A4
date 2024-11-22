@@ -18,45 +18,52 @@ void prompt(void)
  * @param filename The name of the file containing the adjacency matrix.
  * @return Pointer to the created Graph structure, or NULL if an error occurs.
  */
-Graph *readGraph(const char *filename)
-{
+Graph *readGraph(const char *filename){
     // Implement the function logic here
-    FILE *file = fopen(filename, "r"); // open the file for reading
-    
-    // check if the file was opened successfully
-    if(file != NULL){
-        
-        Graph *graph = (Graph *)malloc(sizeof(Graph)); // allocate memory for the graph
-        
-        // check if memory was allocated successfully
-        if(graph != NULL){
-            fscanf(file, "%d", &graph->numVertices); // read the number of vertices from the file
-
-            // loop through the adjacency matrix and read the values from the file
-            for(int i = 0; i < graph->numVertices; i++){
-                for(int j = 0; j < graph->numVertices; j++){
-                    fscanf(file, "%d", &graph->adjMatrix[i][j]); // read the value from the file and store it in the adjacency matrix
-                }
-                graph->adjList[i] = NULL; // initialize the adjacency list to NULL
-            }
-
-            fclose(file); // close the file
-            return graph; // return the graph
-        }
-        // memory for graph was not allocated successfully
-        else {
-            printf("Error allocating memory for graph\n");
-            fclose(file); // close the file
-            return NULL;
-        }
-        
-    }
-    // file was not opened successfully
-    else {
-        printf("Error opening file\n");
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("\nError, was unable to open file %s\n", filename);
         return NULL;
     }
-    return NULL; // return NULL if an error occurs
+
+    int numVertices = 0;
+    char line[1024]; 
+    while (fgets(line, sizeof(line), file)) {
+        numVertices++;
+    }
+    
+    Graph *graph = (Graph *)malloc(sizeof(Graph));
+    if (graph == NULL) {
+        printf("\nError, memory allocation failed.\n");
+        fclose(file);
+        return NULL;
+    }
+    graph->numVertices = numVertices;
+
+    
+    fclose(file); 
+    file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("\nError, was unable to reopen file %s\n", filename);
+        free(graph);
+        return NULL;
+    }
+
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            if (fscanf(file, "%d", &graph->adjMatrix[i][j]) != 1) {
+                printf("\nError reading the value at (%d, %d)\n", i, j);
+                fclose(file);
+                free(graph);
+                return NULL;
+            }
+        }
+        graph->adjList[i] = NULL;
+    }
+
+    fclose(file); 
+    printf("\nGraph successfully read!\n");
+    return graph; 
 }
 
 /**
@@ -88,13 +95,13 @@ void displayAdjacencyList(Graph *graph)
     // Implement the function logic here
     for(int i = 0; i < graph->numVertices; i++){
         Node *current = graph->adjList[i]; // get the current node
-        printf("Vertex %d: ", i + 1); // print the vertex number
+        printf("Vertex %d:", i + 1); // print the vertex number
         // loop through the adjacency list and print the neighbors
         while(current != NULL){
-            printf("%d ", current->vertex + 1); // print the neighbor vertex number
+            printf(" -> %d", current->vertex + 1); // print the neighbor vertex number
             current = current->next; // move to the next neighbor
         }
-        printf("\n");
+        printf("\n\n");
     }
 }
 
@@ -131,14 +138,14 @@ void bfs(Graph *graph, int startVertex)
 
     bool discoveredSet[MAX_VERTICES] = {false}; // set to keep track of discovered vertices
 
-    queue[rear] = startVertex; // add the start vertex to the queue
+    queue[rear++] = startVertex; // add the start vertex to the queue
     discoveredSet[startVertex] = true; // mark the start vertex as discovered
 
     // loop until the queue is empty
     while(front < rear) { 
         int currentVertex = queue[front++]; // get the front vertex from the queue
 
-        printf("%d ", currentVertex + 1); // print the vertex number
+        printf(" -> %d", currentVertex + 1); // print the vertex number
 
         Node *neighbor = graph->adjList[currentVertex]; // get the neighbors of the current vertex
         
@@ -176,7 +183,7 @@ void dfs(Graph *graph, int startVertex)
 
         // if the vertex is not visited, visit it
         if(!visitedSet[currentVertex]){
-            printf("%d ", currentVertex + 1); // print the vertex number
+            printf(" -> %d", currentVertex + 1); // print the vertex number
             visitedSet[currentVertex] = true; // mark the vertex as visited
 
             Node *neighbor = graph->adjList[currentVertex]; // get the neighbors of the current vertex  
@@ -242,29 +249,26 @@ void dijkstra(Graph *graph, int startVertex)
         }
 
     }
-    // print results
-    for(int i = 0; i < numVertices; i++){
-        // if the distance is equal to infinity, the vertex is not reachable
-        if (distance[i] == INT_MAX){
-            printf("Vertex %d is not reachable from vertex %d\n", i + 1, startVertex + 1);
-        } 
-        else {
-            // print the shortest distance and the shortest path
-            printf("Shortest distance from vertex %d to vertex %d is %d\n", startVertex + 1, i + 1, distance[i]);
-            int path[MAX_VERTICES]; // array to store the shortest path
-            int pathLength = 0; // length of the path
 
-            // loop through the previous vertices to find the shortest path
+    for (int i = 0; i < numVertices; i++) {
+        printf("\n=+=+=+=+=+=+=+=+=+=+=+=+=");
+        printf("\n\nVERTEX %d: ", i + 1);
+        printf("\n\n   Distance = %d", distance[i]);
+        printf("\n\n   Path = ");
+        
+        if (distance[i] == INT_MAX) {
+            printf("No path\n");
+        } else {
+            int path[MAX_VERTICES], pathLength = 0;
             for (int j = i; j != -1; j = previous[j]){
-                path[pathLength++] = j + 1; // add the vertex to the path
+                path[pathLength++] = j + 1;
             }
-            // print the path in reverse order
-            for (int j = pathLength - 1; j >= 0; j--){
-                printf("%d ", path[j]); // print the path
+            for (int j = pathLength - 1; j >= 0; j--) {
+                printf("%d", path[j]);
+                if (j > 0) printf(" -> ");
             }
             printf("\n");
-        } 
-        
+        }
     }
 
 }
