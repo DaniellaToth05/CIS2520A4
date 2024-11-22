@@ -20,48 +20,61 @@ void prompt(void)
  */
 Graph *readGraph(const char *filename){
     // Implement the function logic here
-    FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r"); // open the file in read mode
+    
+    // check if the file was opened successfully
     if (file == NULL) {
         printf("\nError, was unable to open file %s\n", filename);
         return NULL;
     }
 
-    int numVertices = 0;
-    char line[1024]; 
+    int numVertices = 0; // number of vertices in the graph
+    char line[1024]; // string to store the line that is read from the file
+    // loop through the file to get the number of vertices
     while (fgets(line, sizeof(line), file)) {
-        numVertices++;
+        numVertices++; // increment the number of vertices
     }
     
-    Graph *graph = (Graph *)malloc(sizeof(Graph));
+    Graph *graph = (Graph *)malloc(sizeof(Graph)); // allocate memory for the graph
+
+    // check if memory allocation was successful
     if (graph == NULL) {
         printf("\nError, memory allocation failed.\n");
         fclose(file);
         return NULL;
     }
-    graph->numVertices = numVertices;
 
-    
-    fclose(file); 
+    graph->numVertices = numVertices; // set the number of vertices in the graph
+
+    fclose(file); // close the file
+
+    // reopen the file to read the adjacency matrix
     file = fopen(filename, "r");
+
+    // check if the file was reopened successfully
     if (file == NULL) {
         printf("\nError, was unable to reopen file %s\n", filename);
-        free(graph);
+        free(graph); // free the graph
         return NULL;
     }
 
+    // loop through the file to read the adjacency matrix
     for (int i = 0; i < numVertices; i++) {
+        graph->adjList[i] = NULL; // initialize the adjacency list
+
+        // read the adjacency matrix row by row
         for (int j = 0; j < numVertices; j++) {
+            // read the value for edge (i, j) from the file
             if (fscanf(file, "%d", &graph->adjMatrix[i][j]) != 1) {
-                printf("\nError reading the value at (%d, %d)\n", i, j);
-                fclose(file);
-                free(graph);
-                return NULL;
+                printf("\nError reading adjacency matrix value"); // print an error message if the value was not read
+                fclose(file); // close the file
+                free(graph); // free the graph
+                return NULL; // return NULL
             }
         }
-        graph->adjList[i] = NULL;
     }
 
-    fclose(file); 
+    fclose(file);  // close the file
     //printf("\nGraph successfully read!\n");
     return graph; 
 }
@@ -75,11 +88,13 @@ Node *createNode(int vertex)
 {
     // Implement the function logic here
     Node *newNode = (Node *)malloc(sizeof(Node)); // allocate memory for the new node
+    // if memory allocation was successful, set the vertex number and next pointer
     if(newNode != NULL){
         newNode->vertex = vertex; // set the vertex number
         newNode->next = NULL; // set the next pointer to NULL
         return newNode; // return the new node
     }
+    // if memory allocation failed, print an error message
     else {
         printf("Error allocating memory for node\n");
         return NULL; // return NULL if an error occurs
@@ -101,7 +116,7 @@ void displayAdjacencyList(Graph *graph)
             printf(" -> %d (%d)", current->vertex + 1, graph->adjMatrix[i][current->vertex]); // print the neighbor vertex number
             current = current->next; // move to the next neighbor
         }
-        printf(" NULL\n");
+        printf(" NULL\n"); // print NULL when the end of the list is reached
     }
 }
 
@@ -109,20 +124,32 @@ void displayAdjacencyList(Graph *graph)
  * Converts the adjacency matrix of the graph to an adjacency list.
  * @param graph Pointer to the Graph structure.
  */
-void createAdjacencyList(Graph *graph)
-{
+void createAdjacencyList(Graph *graph){
     // Implement the function logic here
+    
+    // loop through the adjacency matrix to create the adjacency list
     for (int i = 0; i < graph->numVertices; i++) {
-        Node *tail = NULL; 
+       
+        // loop through the neighbors of the current vertex
         for (int j = 0; j < graph->numVertices; j++) {
-            if (graph->adjMatrix[i][j] > 0) { 
-                Node *newNode = createNode(j);
+            
+            // if there is an edge between the vertices...
+            if (graph->adjMatrix[i][j] > 0) {
+                Node *newNode = createNode(j); // create a new node for the neighbor vertex
+
+                // if the adjacency list is empty, add the new node
                 if (graph->adjList[i] == NULL) {
-                    graph->adjList[i] = newNode; 
-                } else {
-                    tail->next = newNode; 
+                    graph->adjList[i] = newNode;
+                } 
+                // if the adjacency list is not empty, add the new node to the end
+                else {
+                    Node *current = graph->adjList[i]; // get the current node
+                    // loop until the end of the list is reached
+                    while (current->next != NULL) {
+                        current = current->next; // move to the next node
+                    }
+                    current->next = newNode; // add the new node to the end of the list
                 }
-                tail = newNode; 
             }
         }
     }
