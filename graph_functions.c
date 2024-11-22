@@ -62,7 +62,7 @@ Graph *readGraph(const char *filename){
     }
 
     fclose(file); 
-    printf("\nGraph successfully read!\n");
+    //printf("\nGraph successfully read!\n");
     return graph; 
 }
 
@@ -98,10 +98,10 @@ void displayAdjacencyList(Graph *graph)
         printf("Vertex %d:", i + 1); // print the vertex number
         // loop through the adjacency list and print the neighbors
         while(current != NULL){
-            printf(" -> %d", current->vertex + 1); // print the neighbor vertex number
+            printf(" -> %d (%d)", current->vertex + 1, graph->adjMatrix[i][current->vertex]); // print the neighbor vertex number
             current = current->next; // move to the next neighbor
         }
-        printf("\n\n");
+        printf(" NULL\n");
     }
 }
 
@@ -112,13 +112,17 @@ void displayAdjacencyList(Graph *graph)
 void createAdjacencyList(Graph *graph)
 {
     // Implement the function logic here
-    for(int i = 0; i < graph->numVertices; i++){
-        for(int j = 0; j < graph->numVertices; j++){
-            // if the edge exists, add the neighbor to the adjacency list
-            if(graph->adjMatrix[i][j] != 0){
-                Node *newNode = createNode(j); // create a new node
-                newNode->next = graph->adjList[i]; // add the new node to the adjacency list
-                graph->adjList[i] = newNode; // update the adjacency list
+    for (int i = 0; i < graph->numVertices; i++) {
+        Node *tail = NULL; 
+        for (int j = 0; j < graph->numVertices; j++) {
+            if (graph->adjMatrix[i][j] > 0) { 
+                Node *newNode = createNode(j);
+                if (graph->adjList[i] == NULL) {
+                    graph->adjList[i] = newNode; 
+                } else {
+                    tail->next = newNode; 
+                }
+                tail = newNode; 
             }
         }
     }
@@ -145,7 +149,7 @@ void bfs(Graph *graph, int startVertex)
     while(front < rear) { 
         int currentVertex = queue[front++]; // get the front vertex from the queue
 
-        printf(" -> %d", currentVertex + 1); // print the vertex number
+        printf("%d ", currentVertex + 1); // print the vertex number
 
         Node *neighbor = graph->adjList[currentVertex]; // get the neighbors of the current vertex
         
@@ -183,18 +187,26 @@ void dfs(Graph *graph, int startVertex)
 
         // if the vertex is not visited, visit it
         if(!visitedSet[currentVertex]){
-            printf(" -> %d", currentVertex + 1); // print the vertex number
+            printf("%d ", currentVertex + 1); // print the vertex number
             visitedSet[currentVertex] = true; // mark the vertex as visited
+
+            int temp[MAX_VERTICES]; // temporary stack to store the neighbors
+            int tempCount = 0; // count of neighbors in the temporary stack
 
             Node *neighbor = graph->adjList[currentVertex]; // get the neighbors of the current vertex  
             
             // loop through the neighbors of the current vertex
             while(neighbor){
                 // if the neighbor is not visited, add it to the stack
-                if(!visitedSet[neighbor->vertex]){
-                    stack[++top] = neighbor->vertex; // add the neighbor to the stack
+                while (neighbor) {
+                    if (!visitedSet[neighbor->vertex]) {
+                        temp[tempCount++] = neighbor->vertex;
+                    }
+                    neighbor = neighbor->next;
                 }
-                neighbor = neighbor->next; // move to the next neighbor
+                for (int i = tempCount - 1; i >= 0; i--) {
+                    stack[++top] = temp[i];
+                }
             }
         }   
     }
@@ -250,26 +262,11 @@ void dijkstra(Graph *graph, int startVertex)
 
     }
 
+    printf("\n");
     for (int i = 0; i < numVertices; i++) {
-        printf("\n=+=+=+=+=+=+=+=+=+=+=+=+=");
-        printf("\n\nVERTEX %d: ", i + 1);
-        printf("\n\n   Distance = %d", distance[i]);
-        printf("\n\n   Path = ");
-        
-        if (distance[i] == INT_MAX) {
-            printf("No path\n");
-        } else {
-            int path[MAX_VERTICES], pathLength = 0;
-            for (int j = i; j != -1; j = previous[j]){
-                path[pathLength++] = j + 1;
-            }
-            for (int j = pathLength - 1; j >= 0; j--) {
-                printf("%d", path[j]);
-                if (j > 0) printf(" -> ");
-            }
-            printf("\n");
-        }
+        printf("Shortest distance from vertex %d to vertex %d: %d\n", startVertex + 1, i + 1, distance[i]);
     }
+    //printf("\n");
 
 }
 
